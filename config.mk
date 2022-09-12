@@ -1,0 +1,2 @@
+CLANG:=clang
+HAVE_FEATURES+=
