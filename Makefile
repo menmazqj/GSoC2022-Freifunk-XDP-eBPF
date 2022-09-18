@@ -15,7 +15,7 @@ endif
 
 include version.mk
 
-UTILS := src
+UTILS := xdpmon
 SUBDIRS := lib $(UTILS)
 .PHONY: check_submodule help clobber distclean clean install test libxdp $(SUBDIRS)
 
