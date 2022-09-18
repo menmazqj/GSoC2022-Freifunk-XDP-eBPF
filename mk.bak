@@ -1,0 +1,48 @@
+SRCDIR := src
+SUBDIRS := lib $(SRCDIR)
+all: $(SUBDIRS)
+
+include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/bpf.mk
+include $(INCLUDE_DIR)/nls.mk
+
+CONFIGURE_VARS += \
+	CC="$(TARGET_CC)" \
+	CFLAGS="$(TARGET_CFLAGS)" \
+	LDFLAGS="$(TARGET_LDFLAGS)" \
+	CLANG="$(CLANG)" \
+	BPF_TARGET="$(BPF_TARGET)" \
+	LLC="$(LLVM_LLC)"
+
+MAKE_VARS += \
+	PREFIX=/usr \
+	RUNDIR=/tmp/run
+
+define Build/Configure
+	$(call Build/Configure/Default)
+	echo "BPF_CFLAGS += -I$(BPF_HEADERS_DIR)/tools/lib" >> $(PKG_BUILD_DIR)/config.mk
+endef
+
+define Build/Compile
+	$(MAKE) -C $(PKG_BUILD_DIR)
+endef
+
+define Package/src/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/xdpmon $(1)/usr/sbin
+endef
+
+lib: config.mk
+	$(MAKE) -C $@
+
+libxdp: config.mk
+	$(MAKE) -C lib $@
+
+src: lib
+	$(MAKE) -C $@
+
+.PHONY: clean
+clean:
+	@for i in $(SUBDIRS); \
+		do $(MAKE) -C $$i clean; \
+	done

@@ -1,0 +1,19 @@
+SRC := src
+SUBDIRS := lib $(SRC)
+all: $(SUBDIRS)
+
+
+lib: config.mk
+	$(MAKE) -C $@
+
+libxdp: config.mk
+	$(MAKE) -C lib $@
+
+src: lib
+	$(MAKE) -C $@
+
+.PHONY: clean
+clean:
+	@for i in $(SUBDIRS); \
+		do $(MAKE) -C $$i clean; \
+	done
