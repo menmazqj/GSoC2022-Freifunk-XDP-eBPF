@@ -17,7 +17,7 @@ include version.mk
 
 UTILS := xdpmon
 SUBDIRS := lib $(UTILS)
-.PHONY: check_submodule help clobber distclean clean install test libxdp $(SUBDIRS)
+.PHONY: check_submodule help clobber distclean clean install libxdp $(SUBDIRS)
 
 all: $(SUBDIRS)
 
@@ -70,13 +70,6 @@ clean: check_submodule
 install: all
 	@for i in $(SUBDIRS); \
 	do $(MAKE) -C $$i install; done
-
-test: all
-	@for i in lib/libxdp $(UTILS); do \
-		echo; echo test $$i; $(MAKE) -C $$i test; \
-		if [ $$? -ne 0 ]; then failed="y"; fi; \
-	done; \
-	if [ ! -z $$failed ]; then exit 1; fi
 
 
 archive: xdp-tools-$(TOOLS_VERSION).tar.gz

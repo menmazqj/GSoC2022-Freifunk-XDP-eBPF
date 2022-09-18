@@ -25,6 +25,7 @@
 #include <linux/sockios.h>
 
 #include <net/if.h>
+#include <xdp/libxdp.h>
 
 #define PCAP_DONT_INCLUDE_PCAP_BPF_H
 #include <pcap/dlt.h>
@@ -37,12 +38,7 @@
 
 #include <xdp/prog_dispatcher.h>
 
-#include "logging.h"
-#include "params.h"
-#include "util.h"
 #include "xdpmon.h"
-#include "xpcapng.h"
-#include "compat.h"
 
 /*****************************************************************************
  * Local definitions and global variables
@@ -100,7 +96,7 @@ int find_map_fd(struct bpf_object *bpf_obj, const char *bpf_map_name) {
 
 	map = bpf_object__find_map_by_name(bpf_obj, bpf_map_name);
 	if (!map) {
-		pr_debug("xdpmon: get map by object failed\n");
+		fprintf(stderr, "xdpmon: get map by object failed\n");
 		goto out;
 	}
 	map_fd = bpf_map__fd(map);
@@ -213,7 +209,7 @@ int main()
 	obj = bpf_obj_from_xdp_program(xprog);
 
 	if (obj == NULL) {
-		pr_debug("xdp object error: Failed to get bpf object, %p\n", obj);
+		fprintf(stderr, "xdp object error: Failed to get bpf object, %p\n", obj);
 	}
 
 //	xdpmon_map_fd = find_map_fd(obj, "xdpmon_array_map");

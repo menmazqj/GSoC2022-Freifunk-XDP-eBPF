@@ -27,7 +27,7 @@ include $(LIB_DIR)/defines.mk
 include $(LIB_DIR)/libxdp/libxdp.mk
 
 # get list of objects in util
-include $(LIB_DIR)/util/util.mk
+#include $(LIB_DIR)/util/util.mk
 
 # Extend if including Makefile already added some
 LIB_OBJS += $(foreach obj,$(UTIL_OBJS),$(LIB_DIR)/util/$(obj))
