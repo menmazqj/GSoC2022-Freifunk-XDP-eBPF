@@ -50,7 +50,6 @@ struct {
 /*****************************************************************************
  * .data section value storing the capture configuration
  *****************************************************************************/
-struct trace_configuration trace_cfg SEC(".data");
 /*****************************************************************************
  * XDP trace program
  *****************************************************************************/
@@ -67,8 +66,6 @@ int xdpmon_prog(struct xdp_md *xdp)
 	if (data >= data_end)
 		return XDP_PASS;
 
-//	ethhdr->h_proto = ;
-//	ethhdr->h_proto = ;
 
 	rec = bpf_map_lookup_elem(&xdpmon_proto_map, &key);
 

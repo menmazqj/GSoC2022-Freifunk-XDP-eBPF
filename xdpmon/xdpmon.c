@@ -70,7 +70,7 @@ static
 */
 // seperator
 void init_config(struct xdp_config *cfg) {
-	cfg->ifname = "br-lan";  //validation
+	cfg->ifname = "ens33";  //validation
 	cfg->ifindex = if_nametoindex(cfg->ifname);
 	cfg->xdp_mode = XDP_MODE_SKB;
 	cfg->num_progs = 1;
@@ -85,14 +85,22 @@ struct bpf_object *bpf_obj_from_xdp_program(struct xdp_program *prog)
 	if (prog) {
 		obj = xdp_program__bpf_obj(prog);
 	} else {
-		//debug_print		
+		fprintf(stderr, "xdp program error: can not get bpf object from xdp program\n");
 	}
 	return obj;
 }
-
-int find_map_fd(struct bpf_object *bpf_obj, const char *bpf_map_name) {
+/*
+int find_map_fd(struct bpf_object *bpf_obj, int mon_type) {
 	struct bpf_map *map;
 	int map_fd = -1;
+	const char *addr_map_name = "xdpmon_ip_addr_map";
+	const char *port_map_name = "xdpmon_port_map";
+	const char *proto_map_name = "xdpmon_proto_map";
+
+	switch(mon_type) {
+	case 0: {
+		}
+	}
 
 	map = bpf_object__find_map_by_name(bpf_obj, bpf_map_name);
 	if (!map) {
@@ -103,7 +111,7 @@ int find_map_fd(struct bpf_object *bpf_obj, const char *bpf_map_name) {
 out:
 	return map_fd;
 }
-
+*/
 struct xdp_program** user_xdp_attach(struct xdp_config *cfg) {
 	int err;	
 	struct xdp_program **progs;

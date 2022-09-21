@@ -21,11 +21,15 @@
 /*****************************************************************************
  * Local definitions and global variables
  *****************************************************************************/
-struct ip_pair {
-	__u8 src_addr[4];
-	__u8 dst_addr[4];
+enum protocols {
+	BATMAN,
+	IPV4,
+	IPV6,
+	ICMP,
+	TCP,
+	UDP,
+	PROTO_MAX,
 };
-
 
 struct datarec {
 	__u32 rx_packtes;
@@ -40,17 +44,6 @@ struct {
 	//__type(value, sizeof(int));
 } xdpmon_proto_map SEC(".maps");
 
-struct {
-	__uint(type, BPF_MAP_TYPE_ARRAY);
-	__uint(max_entries, IP_ADDR_MAX);
-	__type(key, __u32);
-	__type(value, sizeof(struct datarec));
-	//__type(value, sizeof(int));
-} xdpmon_ip_addr_map SEC(".maps");
-/*****************************************************************************
- * .data section value storing the capture configuration
- *****************************************************************************/
-struct trace_configuration trace_cfg SEC(".data");
 /*****************************************************************************
  * XDP trace program
  *****************************************************************************/
@@ -61,15 +54,15 @@ int xdpmon_prog(struct xdp_md *xdp)
 	void *data_end = (void *)(long)xdp->data_end;
 	void *data = (void *)(long)xdp->data;
 	struct datarec *rec;
-	//struct ethhdr *hdr = data;
+	__u16 ethproto;
+	struct ethhdr *hdr = data;
 	int key = 0;
 
 	if (data >= data_end)
 		return XDP_PASS;
 
-//	ethhdr->h_proto = ;
-//	ethhdr->h_proto = ;
-
+	ethproto = __constant_ntohs(ethhdr->h_proto);
+	
 	rec = bpf_map_lookup_elem(&xdpmon_proto_map, &key);
 
 	if (!rec)

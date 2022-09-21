@@ -48,6 +48,7 @@ struct {
 	__type(value, sizeof(struct datarec));
 	//__type(value, sizeof(int));
 } xdpmon_ip_addr_map SEC(".maps");
+
 /*****************************************************************************
  * XDP trace program
  *****************************************************************************/
@@ -58,6 +59,12 @@ void *parse_ether_header(void *hdr)
 	ethproto = __constant_ntohs(hdr->h_proto);
 	
 	switch (ethproto) {
+	case ETH_P_IP: {
+		struct iphdr *iph = (struct iphdr *)(eth + 1);
+		if ((void*)(iph + 1) > data_end)
+			break;
+		       }
+	case ETH_P_IPV6: {
 
 	}	
 }
